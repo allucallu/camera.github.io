@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aplikasi Kamera Otomatis</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      #video {
+        transform: rotateY(180deg);
+      }
+
+      button {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="video" width="100%" height="auto" autoplay></video>
+    <button id="startBtn">Mulai Rekaman</button>
+    <button id="stopBtn">Hentikan Rekaman</button>
+    <script>
+      const video = document.getElementById("video");
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+
+      let mediaRecorder;
+      let recordedBlobs;
+
+      const handleDataAvailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          recordedBlobs.push(event.data);
+        }
+      };
+
+      const startRecording = () => {
+        recordedBlobs = [];
+        const options = { mimeType: "video/webm" };
+        try {
+          mediaRecorder = new MediaRecorder(window.stream, options);
+        } catch (e) {
+          console.error("Exception while creating MediaRecorder:", e);
+          return;
+        }
+        mediaRecorder.ondataavailable = handleDataAvailable;
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+      };
+
+      const stopRecording = () => {
+        mediaRecorder.stop();
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      };
+
+      const handleSuccess = (stream) => {
+        window.stream = stream;
+        video.srcObject = stream;
+      };
+
+      const handleError = (error) => {
+        console.error("navigator.getUserMedia error:", error);
+      };
+
+      navigator.mediaDevices.getUserMedia({ video: true }).then(handleSuccess).catch(handleError);
+
+      startBtn.addEventListener("click", startRecording);
+      stopBtn.addEventListener("click", stopRecording);
+    </script>
+  </body>
+</html>
