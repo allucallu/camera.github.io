@@ -54,7 +54,7 @@
         stopBtn.disabled = true;
 
         // Membuat objek URL dari blob yang direkam
-        const blob = new Blob(recordedBlobs, { type: "video/webm" });
+        const blob = new Blob(recordedBlobs, { type: "video/mp4" });
         const url = window.URL.createObjectURL(blob);
 
         // Membuat elemen a untuk men-download file
